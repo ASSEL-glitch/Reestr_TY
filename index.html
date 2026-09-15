@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Реестр ТУ на кабельную канализацию и ВЛС — 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEAE0;
+    --paper-raised:#F7F4EC;
+    --ink:#1C2A2E;
+    --ink-soft:#5B655F;
+    --line:#D8D0BC;
+    --line-soft:#E3DCC9;
+    --teal:#146B66;
+    --teal-deep:#0E4F4B;
+    --teal-wash:#E2ECE9;
+    --amber:#A9752F;
+    --amber-wash:#F1E6D2;
+    --red:#A2432F;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;}
+
+  /* subtle paper grain via layered gradients */
+  body{
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(28,42,46,0.045) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px 80px;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:46px 0 30px;
+    border-bottom:2px solid var(--ink);
+    position:relative;
+  }
+  .stamp{
+    position:absolute;
+    top:38px; right:28px;
+    width:96px; height:96px;
+    border:2px solid var(--teal);
+    border-radius:50%;
+    transform:rotate(-9deg);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    color:var(--teal-deep);
+    opacity:0.85;
+  }
+  .stamp span:first-child{font-family:'IBM Plex Mono'; font-size:24px; font-weight:600; letter-spacing:0.5px;}
+  .stamp span:last-child{font-family:'IBM Plex Mono'; font-size:9px; letter-spacing:1.5px; margin-top:2px;}
+
+  .kicker{
+    font-family:'IBM Plex Mono';
+    font-size:13px;
+    color:var(--teal-deep);
+    margin:0 0 14px;
+    max-width:640px;
+  }
+  h1{
+    font-size:34px;
+    font-weight:600;
+    margin:0 0 10px;
+    max-width:760px;
+    letter-spacing:-0.01em;
+  }
+  .subline{
+    color:var(--ink-soft);
+    font-size:15px;
+    max-width:640px;
+    margin:0;
+  }
+
+  /* ---------- Stats strip ---------- */
+  .stats{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0;
+    margin-top:34px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+  }
+  .stat{
+    flex:1 1 140px;
+    padding:16px 20px;
+    border-right:1px solid var(--line);
+  }
+  .stat:last-child{border-right:none;}
+  .stat .num{
+    font-family:'IBM Plex Mono';
+    font-size:26px;
+    font-weight:600;
+    color:var(--teal-deep);
+    display:block;
+    line-height:1.1;
+  }
+  .stat .lbl{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:4px;
+    display:block;
+  }
+  .qbars{display:flex; align-items:flex-end; gap:5px; height:26px; margin-top:2px;}
+  .qbars .bar{
+    width:14px;
+    background:var(--teal);
+    opacity:0.55;
+    border-radius:2px 2px 0 0;
+    position:relative;
+  }
+  .qbars .bar.active{opacity:1;}
+
+  /* ---------- Controls ---------- */
+  .controls{
+    margin-top:28px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+  }
+  .search-box{
+    flex:1 1 260px;
+    position:relative;
+  }
+  .search-box input{
+    width:100%;
+    padding:11px 14px 11px 36px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    font-family:'IBM Plex Sans';
+    font-size:14.5px;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s;
+  }
+  .search-box input:focus{border-color:var(--teal);}
+  .search-box svg{
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    width:15px; height:15px; stroke:var(--ink-soft);
+  }
+  select{
+    padding:11px 14px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    font-family:'IBM Plex Sans';
+    font-size:14px;
+    color:var(--ink);
+    outline:none;
+    cursor:pointer;
+  }
+  .chips{display:flex; gap:8px;}
+  .chip{
+    padding:9px 14px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    font-size:13.5px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    user-select:none;
+    transition:all .12s;
+    white-space:nowrap;
+  }
+  .chip:hover{border-color:var(--teal);}
+  .chip.active{
+    background:var(--teal);
+    border-color:var(--teal);
+    color:#fff;
+    font-weight:500;
+  }
+
+  /* ---------- Table ---------- */
+  .table-shell{
+    margin-top:22px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    overflow-x:auto;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:760px;
+  }
+  thead th{
+    text-align:left;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    padding:13px 14px;
+    border-bottom:1px solid var(--ink);
+    background:var(--paper-raised);
+    position:sticky; top:0;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  thead th:hover{color:var(--teal-deep);}
+  thead th .arrow{font-size:10px; margin-left:3px; opacity:0.6;}
+  tbody tr{
+    border-bottom:1px solid var(--line-soft);
+    cursor:pointer;
+    transition:background .1s;
+  }
+  tbody tr:hover{background:var(--teal-wash);}
+  tbody tr.expanded{background:var(--teal-wash);}
+  tbody td{
+    padding:12px 14px;
+    font-size:14px;
+    vertical-align:top;
+  }
+  td.n{color:var(--ink-soft); font-family:'IBM Plex Mono'; font-size:12.5px;}
+  td.tu{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--teal-deep); white-space:nowrap;}
+  td.date{font-family:'IBM Plex Mono'; font-size:12.5px; white-space:nowrap;}
+  .status-badge{
+    display:inline-block;
+    padding:3px 9px;
+    font-size:12px;
+    border-radius:2px;
+    font-weight:500;
+    white-space:nowrap;
+  }
+  .status-no{background:var(--amber-wash); color:var(--amber);}
+  .status-yes{background:var(--teal-wash); color:var(--teal-deep);}
+  .has-detail{margin-left:6px; color:var(--teal); font-size:11px;}
+
+  tr.detail-row td{
+    padding:0 14px 16px 14px;
+    background:var(--teal-wash);
+  }
+  tr.detail-row .detail-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:10px 24px;
+    padding:12px 0 4px;
+    border-top:1px dashed var(--line);
+    margin-top:0;
+  }
+  .detail-item .dt{
+    font-size:11px;
+    text-transform:none;
+    color:var(--ink-soft);
+    margin-bottom:2px;
+  }
+  .detail-item .dd{
+    font-size:13.5px;
+    color:var(--ink);
+  }
+
+  .empty-state{
+    padding:60px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+
+  .footer-line{
+    margin-top:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:var(--ink-soft);
+    font-size:12.5px;
+  }
+  .footer-line .mono{color:var(--ink-soft);}
+
+  footer.page-footer{
+    margin-top:50px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    color:var(--ink-soft);
+    font-size:12.5px;
+  }
+
+  @media (max-width:640px){
+    .stamp{display:none;}
+    h1{font-size:26px;}
+    .wrap{padding:0 16px 60px;}
+    header{padding:30px 0 24px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="stamp"><span>2026</span><span>РЕЕСТР</span></div>
+    <p class="kicker">Реестр согласно приказу №189 от 20.06.2025г.</p>
+    <h1>ТУ на кабельную канализацию и ВЛС</h1>
+    <p class="subline">Учёт технических условий: даты заявок, выдача, разрешения на ПИР и СМР, продления и примечания по каждому объекту.</p>
+
+    <div class="stats" id="statsStrip"></div>
+  </header>
+
+  <div class="controls">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="searchInput" placeholder="Поиск по номеру ТУ, населённому пункту, примечанию…">
+    </div>
+    <select id="locFilter"></select>
+    <div class="chips" id="quarterChips"></div>
+  </div>
+
+  <div class="table-shell">
+    <table id="registryTable">
+      <thead>
+        <tr>
+          <th data-key="n" style="width:52px;">№</th>
+          <th data-key="loc">Населённый пункт</th>
+          <th data-key="order_date">Дата заявки</th>
+          <th data-key="tu_num">№ ТУ</th>
+          <th data-key="issue_date">Дата выдачи</th>
+          <th data-key="done">Статус</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">Ничего не найдено по заданным условиям.</div>
+  </div>
+
+  <div class="footer-line">
+    <span id="countLine" class="mono"></span>
+    <span class="mono">Кызылорда, Казахстан</span>
+  </div>
+
+  <footer class="page-footer">
+    Реестр технических условий на кабельную канализацию и воздушные линии связи. Данные приведены по состоянию на сентябрь 2026 г.
+  </footer>
+
+</div>
+
+<script id="registry-data" type="application/json">
+[{"n": 1, "loc": "г.Кызылорда", "order_date": "08.01.2025", "tu_num": "№Д12-4-01/Т-01/26", "done": "Нет", "issue_date": "12.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 2, "loc": "г.Кызылорда", "order_date": "06.01.2026", "tu_num": "№Д12-3-02/Л-01/26", "done": "Нет", "issue_date": "14.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 3, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-03/Л-01/26", "done": "Нет", "issue_date": "19.01.2026", "pir": "№292 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 4, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-04/Л-01/26", "done": "Нет", "issue_date": "20.01.2026", "pir": "№293 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 5, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-05/Л-01/26", "done": "Нет", "issue_date": "12.01.2026", "pir": "№294 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 6, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-06/Л-01/26", "done": "Нет", "issue_date": "13.01.2026", "pir": "№295 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 7, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-07/Л-01/26", "done": "Нет", "issue_date": "13.01.2026", "pir": "№296 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 8, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-08/Л-01/26", "done": "Нет", "issue_date": "13.01.2026", "pir": "№297 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 9, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-09/Л-01/26", "done": "Нет", "issue_date": "13.01.2026", "pir": "№298 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 10, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-10/Л-01/26", "done": "Нет", "issue_date": "14.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 11, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-11/Л-01/26", "done": "Нет", "issue_date": "14.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 12, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-12/Л-01/26", "done": "Нет", "issue_date": "14.01.2026", "pir": "№299 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 13, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-13/Л-01/26", "done": "Нет", "issue_date": "14.01.2026", "pir": "№300 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 14, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-14/Л-01/26", "done": "Нет", "issue_date": "14.01.2026", "pir": "№301 от 12.05.2026г. АО \"Транстелеком\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 15, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-15/Л-01/26", "done": "Нет", "issue_date": "19.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 16, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-16/Л-01/26", "done": "Нет", "issue_date": "20.01.2026", "pir": "№279 от 24.02.26 АО «Транстелеком»", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 17, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-17/Л-01/26", "done": "Нет", "issue_date": "20.01.2026", "pir": "№278 от 24.02.26 АО «Транстелеком»", "project": "26.03.2026", "smr": "№283 от 26.03.26 АО «Транстелеком»", "act": "", "rent": "(изменение было ТУ №Д12-3-71/Л-04/26 от 27.04.2026г)", "change": "", "prolong": "", "note": "(изменение было ТУ №Д12-3-71/Л-04/26 от 27.04.2026г)", "order_month": 1, "order_quarter": 1}, {"n": 18, "loc": "г.Аральск", "order_date": "16.01.2026", "tu_num": "№Д12-4-18/Т-01/26", "done": "Нет", "issue_date": "26.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 19, "loc": "г.Аральск, п.Жанакорган", "order_date": "08.01.2026", "tu_num": "№Д12-4-19/П-01/26", "done": "Нет", "issue_date": "27.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 20, "loc": "г.Кызылорда", "order_date": "19.01.2026", "tu_num": "№Д12-1-20/Т-01/26", "done": "Нет", "issue_date": "22.01.2026", "pir": "№273 от 26.01.26", "project": "от 28.01.26", "smr": "№274 от 29.01.26", "act": "", "rent": "напаравлен в ЦКП 13.04.2026", "change": "(изменение к ТУ № Д11-130-12/24 от 27.12.24г.)", "prolong": "(продление к ТУ № Д11-130-12/24 от 27.12.24г.)", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 21, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-21/Л-01/26", "done": "Нет", "issue_date": "26.01.2026", "pir": "№322 от 28.07.26 АО «Транстелеком»", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 22, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-22/Л-01/26", "done": "Нет", "issue_date": "26.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 23, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-23/Л-01/26", "done": "Нет", "issue_date": "26.01.2026", "pir": "№321 от 28.07.26 АО «Транстелеком»", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 24, "loc": "п.Шиели", "order_date": "26.01.2026", "tu_num": "№Д12-7-24/Т-01/26", "done": "Нет", "issue_date": "29.01.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 25, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-25/Л-01/26", "done": "Нет", "issue_date": "29.01.2026", "pir": "№275 от 24.02.26 АО «Транстелеком»", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 26, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-26/Л-01/26", "done": "Нет", "issue_date": "29.01.2026", "pir": "№276 от 24.02.26 АО «Транстелеком»", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 27, "loc": "г.Кызылорда", "order_date": "12.01.2026", "tu_num": "№Д12-3-27/Л-01/26", "done": "Нет", "issue_date": "29.01.2026", "pir": "№277 от 24.02.26 АО «Транстелеком»", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 28, "loc": "г.Кызылорда", "order_date": "22.01.2026", "tu_num": "№Д12-3-28/Л-02/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 29, "loc": "г.Кызылорда", "order_date": "22.01.2026", "tu_num": "№Д12-3-29/Л-02/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 30, "loc": "г.Кызылорда", "order_date": "19.01.2026", "tu_num": "№Д12-7-30/Т-02/26", "done": "Нет", "issue_date": "05.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 31, "loc": "г.Кызылорда", "order_date": "19.01.2026", "tu_num": "№Д12-7-31/Т-02/26", "done": "Нет", "issue_date": "05.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 32, "loc": "г.Кызылорда", "order_date": "05.02.2026", "tu_num": "№Д12-2-32/Л-02/26", "done": "Нет", "issue_date": "06.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "(изменение к ТУ № Д11-45-05/24 от 04.05.24г.)", "prolong": "(продление к ТУ № Д11-45-05/24 от 04.05.24г.)", "note": "Направлено в ЦКП", "order_month": 2, "order_quarter": 1}, {"n": 33, "loc": "п. Айтеке би Казалинский район", "order_date": "26.01.2026", "tu_num": "№Д12-7-33/Т-02/26", "done": "Нет", "issue_date": "09.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 34, "loc": "г.Кызылорда", "order_date": "03.02.2026", "tu_num": "№Д12-3-34/Л-02/26", "done": "Нет", "issue_date": "17.02.2026", "pir": "№281 от 12.03.26 ТОО «Light Con»", "project": "18.03.2026", "smr": "№282 от 19.03.26 ТОО «Light Con»", "act": "", "rent": "напаравлен в ЦКП 31.03.2026", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 35, "loc": "г.Кызылорда", "order_date": "06.02.2026", "tu_num": "№Д12-3-35/Л-02/26", "done": "Нет", "issue_date": "10.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 36, "loc": "г.Кызылорда", "order_date": "06.02.2026", "tu_num": "№Д12-3-36/Л-02/26", "done": "Нет", "issue_date": "10.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 37, "loc": "г.Кызылорда", "order_date": "09.02.2026", "tu_num": "№Д12-1-37/П-02/26", "done": "Нет", "issue_date": "10.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "(корректировка к ТУ № Д12-1-134/П-12/25 от 09.12.25г.)", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 38, "loc": "г.Кызылорда", "order_date": "09.02.2026", "tu_num": "№Д12-1-38/П-02/26", "done": "Нет", "issue_date": "13.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 39, "loc": "г.Кызылорда", "order_date": "05.02.2026", "tu_num": "№Д12-7-39/Л-02/26", "done": "Нет", "issue_date": "12.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 40, "loc": "г.Кызылорда", "order_date": "06.02.2026", "tu_num": "№Д12-1-40/Т-02/26", "done": "Нет", "issue_date": "13.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 41, "loc": "г.Кызылорда", "order_date": "12.02.2026", "tu_num": "№Д12-3-41/Л-02/26", "done": "Нет", "issue_date": "17.02.2026", "pir": "№287 от 01.04.26 ИП \"Тукпиева\"", "project": "06.04.2026", "smr": "№288 ИП \"Тукпиева\" от 07.04.26 ИП \"Тукпиева\"", "act": "", "rent": "Договора аренды не будет ,ведомственная каб. канализация , врезка с сущ.ККС Казахтелеком", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 42, "loc": "г.Кызылорда", "order_date": "16.02.2026", "tu_num": "№Д12-3-42/Л-02/26", "done": "Нет", "issue_date": "17.02.2026", "pir": "№280 от 10.03.26 ИП \"Тукпиева\"", "project": "26.03.2026", "smr": "№284 от 27.03.26 ИП \"Тукпиева\"", "act": "", "rent": "напаравлен в ЦКП 07.04.2026", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 43, "loc": "г.Кызылорда", "order_date": "26.01.2026", "tu_num": "№ Д12-3С-2/26-2", "done": "Нет", "issue_date": "10.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 44, "loc": "п.Жанакорган", "order_date": "23.01.2026", "tu_num": "№ Д12-8-3/С-02/26", "done": "Нет", "issue_date": "19.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 45, "loc": "г.Кызылорда", "order_date": "27.01.2026", "tu_num": "№Д12-1-1/П-3/26", "done": "Нет", "issue_date": "20.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 46, "loc": "г.Кызылорда", "order_date": "19.01.2026", "tu_num": "№Д12-7-43/Т-02/26", "done": "Нет", "issue_date": "23.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 47, "loc": "п. Жосалы Кармакшинский район", "order_date": "26.01.2026", "tu_num": "№Д12-7-44/Т-02/26", "done": "Нет", "issue_date": "24.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 48, "loc": "г.Кызылорда", "order_date": "24.02.2026", "tu_num": "№Д12-1-45/Л-02/26", "done": "Нет", "issue_date": "26.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 49, "loc": "г.Кызылорда", "order_date": "20.02.2026", "tu_num": "№Д12-3-46/П-03/26", "done": "Нет", "issue_date": "04.03.2026", "pir": "", "project": "согласованного проекта нет, так как аварийно-восстанови.т работы", "smr": "№289 от 22.04.26 ТОО \"Айтек Сервис\"", "act": "от 12.06.2026", "rent": "Договор аренды не нужен", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 50, "loc": "г.Аральск", "order_date": "24.02.2026", "tu_num": "№Д12-1-47/Т-02/26", "done": "Нет", "issue_date": "26.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 51, "loc": "г.Аральск", "order_date": "24.02.2026", "tu_num": "№Д12-1-48/Т-02/26", "done": "Нет", "issue_date": "26.02.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 2, "order_quarter": 1}, {"n": 52, "loc": "г.Кызылорда", "order_date": "02.03.2026", "tu_num": "№Д12-7-49/Т-03/26", "done": "Нет", "issue_date": "03.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 53, "loc": "г.Кызылорда", "order_date": "02.03.2026", "tu_num": "№Д12-3-50/Л-03/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 54, "loc": "г.Кызылорда", "order_date": "04.03.2026", "tu_num": "№Д12-7-51/Л-03/26", "done": "Нет", "issue_date": "10.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 55, "loc": "г.Кызылорда", "order_date": "06.03.2026", "tu_num": "№Д12-7-52/Т-03/26", "done": "Нет", "issue_date": "10.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 56, "loc": "п.Шиели", "order_date": "06.03.2026", "tu_num": "№Д12-3-53/Л-03/26", "done": "Нет", "issue_date": "11.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 57, "loc": "г.Кызылорда", "order_date": "10.03.2026", "tu_num": "№Д12-3-54/Л-03/26", "done": "Нет", "issue_date": "12.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 58, "loc": "г.Кызылорда", "order_date": "13.03.2026", "tu_num": "№Д12-1-55/Т-03/26", "done": "Нет", "issue_date": "16.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "(изменение к ТУ № №Д12-1-139/Т-12/25 от 11.12.25г.)", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 59, "loc": "г.Байконур", "order_date": "27.01.2026", "tu_num": "№ Д12-7-5/С-03/26", "done": "Нет", "issue_date": "17.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 1, "order_quarter": 1}, {"n": 60, "loc": "г.Кызылорда", "order_date": "19.03.2026", "tu_num": "№Д12-3-56/Л-03/26", "done": "Нет", "issue_date": "30.03.2026", "pir": "№306 от 12.06.26 ТОО \"I Telecom\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 61, "loc": "г.Кызылорда", "order_date": "27.03.2026", "tu_num": "№Д12-4-57/Т-03/26", "done": "Нет", "issue_date": "30.03.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 3, "order_quarter": 1}, {"n": 62, "loc": "г.Кызылорда", "order_date": "07.04.2026", "tu_num": "№Д12-1-58/П-04/26", "done": "Нет", "issue_date": "07.04.2026", "pir": "№290 от 04.05.26г. ИП \"NetLine\"", "project": "05.05.26", "smr": "№291 от 05.05.26г. ИП \"NetLine\"", "act": "(изменение ТУ было №Д12-1-81/П-05/26 от 19.05.2025г.)", "rent": "Договор не нужен", "change": "", "prolong": "", "note": "(изменение ТУ было №Д12-1-81/П-05/26 от 19.05.2025г.)", "order_month": 4, "order_quarter": 2}, {"n": 63, "loc": "г.Кызылорда", "order_date": "07.04.2026", "tu_num": "№Д12-4-59/П-04/26", "done": "Нет", "issue_date": "14.04.2026", "pir": "№304 от 09.06.26г. ТОО \"Энерго Телеком\"", "project": "29.06.2026", "smr": "№308 от 29.06.26 ТОО \"Энерго Телеком\"", "act": "", "rent": "Договор не нужен", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 64, "loc": "г.Кызылорда", "order_date": "07.04.2026", "tu_num": "№Д12-4-60/Т-04/26", "done": "Нет", "issue_date": "15.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 65, "loc": "г.Кызылорда", "order_date": "07.04.2026", "tu_num": "№Д12-3-61/Л-04/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 66, "loc": "г.Кызылорда", "order_date": "07.04.2026", "tu_num": "№Д12-3-62/Л-04/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 67, "loc": "г.Кызылорда", "order_date": "09.04.2026", "tu_num": "№Д12-7-63/Л-04/26", "done": "Нет", "issue_date": "15.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 68, "loc": "г.Кызылорда", "order_date": "10.04.2026", "tu_num": "№Д12-3-64/П-04/26", "done": "Нет", "issue_date": "17.04.2026", "pir": "№324 от 17.08.2026г.ТОО \"Айтек Сервис\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 69, "loc": "г.Кызылорда", "order_date": "", "tu_num": "№Д12-3/С-04-26-6", "done": "Нет", "issue_date": "17.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": null, "order_quarter": null}, {"n": 70, "loc": "г.Кызылорда", "order_date": "", "tu_num": "№Д12-3/С-04-26-7", "done": "Нет", "issue_date": "17.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": null, "order_quarter": null}, {"n": 71, "loc": "г.Кызылорда", "order_date": "09.04.2026", "tu_num": "№Д12-7-65/Т-04/26", "done": "Нет", "issue_date": "20.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 72, "loc": "г.Кызылорда", "order_date": "10.04.2026", "tu_num": "№Д12-3-66/Л-04/26", "done": "Нет", "issue_date": "27.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 73, "loc": "г.Кызылорда", "order_date": "10.04.2026", "tu_num": "№Д12-3-67/Л-04/26", "done": "Нет", "issue_date": "27.04.2026", "pir": "№314 от 09.07.2026г.ИП \"Тукпиева\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 74, "loc": "г.Кызылорда", "order_date": "15.04.2026", "tu_num": "№Д12-3-68/Л-04/26", "done": "Нет", "issue_date": "28.04.2026", "pir": "№325 от 18.08.2026", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 75, "loc": "г.Кызылорда", "order_date": "21.04.2026", "tu_num": "№Д12-3-69/Л-04/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "Отказались от ТУ. Написали письмо на ануляцию исх.№ 7.2.2-13/2698/2026 от 19.05.2026", "order_month": 4, "order_quarter": 2}, {"n": 76, "loc": "пос. Жанакорган", "order_date": "17.04.2026", "tu_num": "№Д12-9-70/Т-04/26", "done": "Нет", "issue_date": "23.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 77, "loc": "г.Кызылорда", "order_date": "24.04.2026", "tu_num": "№Д12-3-71/Л-04/26", "done": "Нет", "issue_date": "27.04.2026", "pir": "№323 от 28.07.26 АО «Транстелеком»", "project": "", "smr": "", "act": "", "rent": "", "change": "(изменение к ТУ №Д12-3-17/Л-01/26 от 20.01.2026г)", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 78, "loc": "г.Кызылорда", "order_date": "27.04.2026", "tu_num": "№Д12-8-72/Т-04/26", "done": "Нет", "issue_date": "30.04.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ №Д11-98-09/24 от 18.09.2024г.)", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 79, "loc": "г.Кызылорда", "order_date": "29.04.2026", "tu_num": "№Д12-3-73/Л-04/26", "done": "Нет", "issue_date": "29.04.2026", "pir": "№302 от 01.06.2026г. АО \"Транстелеком\"", "project": "10.07.2026", "smr": "№316 от 10.07.2026г. АО \"Транстелеком\"", "act": "", "rent": "напаравлен в ЦКП 17.07.2026", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 80, "loc": "г.Кызылорда", "order_date": "", "tu_num": "№ Д12-3/С-05-26-13", "done": "Нет", "issue_date": "04.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": null, "order_quarter": null}, {"n": 81, "loc": "г.Кызылорда", "order_date": "09.04.2026", "tu_num": "№Д12-7-74/Т-05/26", "done": "Нет", "issue_date": "04.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 82, "loc": "г.Кызылорда", "order_date": "06.05.2026", "tu_num": "№Д12-4-75/Л-05/26", "done": "Нет", "issue_date": "08.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ №Д11-51-05/24 от 24.05.2024г.)", "note": "", "order_month": 5, "order_quarter": 2}, {"n": 83, "loc": "г.Кызылорда", "order_date": "28.04.2026", "tu_num": "№Д12-2-76/Л-05/26", "done": "Нет", "issue_date": "12.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 84, "loc": "г.Кызылорда", "order_date": "28.04.2026", "tu_num": "№Д12-2-77/Л-05/26", "done": "Нет", "issue_date": "12.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 85, "loc": "г.Кызылорда", "order_date": "28.04.2026", "tu_num": "№Д12-2-78/Л-05/26", "done": "Нет", "issue_date": "12.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 86, "loc": "г.Кызылорда", "order_date": "28.04.2026", "tu_num": "№Д12-2-79/Л-05/26", "done": "Нет", "issue_date": "12.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 87, "loc": "г.Кызылорда", "order_date": "08.05.2026", "tu_num": "№Д12-1-80/Т-05/26", "done": "Нет", "issue_date": "20.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 5, "order_quarter": 2}, {"n": 88, "loc": "г.Кызылорда", "order_date": "05.05.2026", "tu_num": "№Д12-1-81/П-05/26", "done": "Нет", "issue_date": "19.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "(изменение к ТУ №Д12-1-58/П-04/26 от 07.04.2025г.)", "prolong": "", "note": "", "order_month": 5, "order_quarter": 2}, {"n": 89, "loc": "г.Кызылорда", "order_date": "18.05.2026", "tu_num": "№Д12-1-82/Т-05/26", "done": "Нет", "issue_date": "19.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ №Д12-18/Л-02/25 от 19.02.2025г.)", "note": "", "order_month": 5, "order_quarter": 2}, {"n": 90, "loc": "г.Кызылорда", "order_date": "18.05.2026", "tu_num": "№Д12-1-83/Т-05/26", "done": "Нет", "issue_date": "21.05.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 5, "order_quarter": 2}, {"n": 91, "loc": "г.Кызылорда", "order_date": "19.05.2026", "tu_num": "№Д12-1-84/Т-05/26", "done": "Нет", "issue_date": "21.05.2026", "pir": "№312 ТОО \"Астел-К\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 5, "order_quarter": 2}, {"n": 92, "loc": "г.Кызылорда", "order_date": "09.04.2026", "tu_num": "№Д12-7-85/Т-06/26", "done": "Нет", "issue_date": "09.06.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 4, "order_quarter": 2}, {"n": 93, "loc": "п.Бекежанова Шиелийского района", "order_date": "03.06.2026", "tu_num": "№Д12-1-86/Т-06/26", "done": "Нет", "issue_date": "10.06.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 6, "order_quarter": 2}, {"n": 94, "loc": "г.Кызылорда", "order_date": "09.06.2026", "tu_num": "№Д12-3-87/Л-06/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 6, "order_quarter": 2}, {"n": 95, "loc": "г.Кызылорда", "order_date": "10.06.2026", "tu_num": "Д12-3-88/Л-06/26", "done": "Нет", "issue_date": "12.06.2026", "pir": "№307 от 23.06.26 ТОО \"I Telecom\"", "project": "30.06.2026", "smr": "№310 от 01.07.26 ТОО \"I Telecom\"", "act": "АКТ от 10.09.2026", "rent": "не нужен (ведомственная канализация)", "change": "", "prolong": "", "note": "", "order_month": 6, "order_quarter": 2}, {"n": 96, "loc": "г.Кызылорда", "order_date": "09.06.2026", "tu_num": "№Д12-7-89/Т-06/26", "done": "Нет", "issue_date": "15.06.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 6, "order_quarter": 2}, {"n": 97, "loc": "г.Кызылорда", "order_date": "24.06.2026", "tu_num": "№Д12-7-90/Т-06/26", "done": "Нет", "issue_date": "25.06.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 6, "order_quarter": 2}, {"n": 98, "loc": "г.Кызылорда", "order_date": "30.06.2026", "tu_num": "№Д12-3-91/Л-06/26", "done": "Нет", "issue_date": "30.06.2026", "pir": "№315 от 09.07.2026г.ИП \"Тукпиева\"", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 6, "order_quarter": 2}, {"n": 99, "loc": "г.Кызылорда", "order_date": "02.07.2026", "tu_num": "№Д12-3-92/Л-07/26", "done": "Нет", "issue_date": "02.07.2026", "pir": "№313 от 08.07.26 ТОО \"I Telecom\"", "project": "10.07.2026", "smr": "№317 от 13.07.26 ТОО \"I Telecom\"", "act": "АКТ от 10.09.2026", "rent": "напаравлен в ЦКП 15.07.2026", "change": "", "prolong": "", "note": "", "order_month": 7, "order_quarter": 3}, {"n": 100, "loc": "г.Кызылорда ,с/о Аксуатский с.Махамбетов, урочище Жанадария", "order_date": "29.06.2026", "tu_num": "№Д12-1/С-07.26-10", "done": "Нет", "issue_date": "09.07.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 6, "order_quarter": 2}, {"n": 101, "loc": "г.Кызылорда", "order_date": "20.07.2026", "tu_num": "№Д12-1-16/С-07/26", "done": "Нет", "issue_date": "22.07.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 7, "order_quarter": 3}, {"n": 102, "loc": "г.Кызылорда", "order_date": "03.08.2026", "tu_num": "№Д12-2-93/Л-08/26", "done": "Нет", "issue_date": "03.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 103, "loc": "г.Кызылорда", "order_date": "15.07.2026", "tu_num": "№Д12-3-94/Л-08/26", "done": "Нет", "issue_date": "04.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 7, "order_quarter": 3}, {"n": 104, "loc": "г.Кызылорда", "order_date": "15.07.2026", "tu_num": "№Д12-3-95/Л-08/26", "done": "Нет", "issue_date": "04.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 7, "order_quarter": 3}, {"n": 105, "loc": "г.Аральск", "order_date": "16.07.2026", "tu_num": "№ Д12-1-17/С-08-26", "done": "Нет", "issue_date": "04.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 7, "order_quarter": 3}, {"n": 106, "loc": "г.Кызылорда", "order_date": "17.07.2026", "tu_num": "№Д12-2-96/Т-08/26", "done": "Нет", "issue_date": "06.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 7, "order_quarter": 3}, {"n": 107, "loc": "г.Кызылорда", "order_date": "12.08.2026", "tu_num": "№Д12-3-97Л-08/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 108, "loc": "г.Кызылорда", "order_date": "13.08.2026", "tu_num": "№Д12-1-98/Л-08/26", "done": "Нет", "issue_date": "18.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 109, "loc": "г.Кызылорда", "order_date": "14.08.2026", "tu_num": "№Д12-3-99/Л-08/26", "done": "Нет", "issue_date": "17.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ № Д11-66-07/24 от 12.07.2024 г.)", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 110, "loc": "г.Кызылорда", "order_date": "14.08.2026", "tu_num": "№Д12-3-100/Л-08/26", "done": "Нет", "issue_date": "18.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ № Д11-2/Л-08/23-60 от 18.08.2023 г.)", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 111, "loc": "г.Кызылорда", "order_date": "14.08.2026", "tu_num": "№Д12-3-101/Л-08/26", "done": "Нет", "issue_date": "19.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ № Д11-2/Л-08/23-61 от 18.08.2023 г.)", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 112, "loc": "г.Кызылорда", "order_date": "14.08.2026", "tu_num": "№Д12-3-102/Л-08/26", "done": "Нет", "issue_date": "19.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ № Д11-2/Л-08/23-59 от 18.08.2023 г.)", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 113, "loc": "г.Кызылорда", "order_date": "14.08.2026", "tu_num": "№Д12-3-103/Л-08/26", "done": "Нет", "issue_date": "19.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ № Д11-2/Л-08/23-58 от 18.08.2023 г.)", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 114, "loc": "г.Кызылорда", "order_date": "19.08.2026", "tu_num": "№Д12-3-104Л-08/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 115, "loc": "Разъезда 21 и с. Жансеит Шиелийский район Кызылординская область", "order_date": "19.08.2026", "tu_num": "№Д12-7-105/Л-08/26", "done": "Нет", "issue_date": "26.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 116, "loc": "г.Кызылорда", "order_date": "26.08.2026", "tu_num": "№Д12-3-106/Л-08/26", "done": "Нет", "issue_date": "27.08.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "(продление к ТУ №Д11-92-09/24 от 06.09.2024 г., к ТУ №Д12-3-83/Л-07/25 от 30.07.2025г.)", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 117, "loc": "г.Кызылорда", "order_date": "28.08.2026", "tu_num": "№Д12-3-107Л-08/26", "done": "Нет", "issue_date": "", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 118, "loc": "г.Кызылорда", "order_date": "02.09.2026", "tu_num": "№Д12-4-108/Т-09/26", "done": "Нет", "issue_date": "02.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}, {"n": 119, "loc": "п.Айтеке би Казалинский район,п. Жанакорган,г.Аральск ,п.Теренозек Сырдарьинского района,п. Шиели,п.Жосалы Кармакшинский район,", "order_date": "31.08.2026", "tu_num": "№Д12-7-109/Т-09/26", "done": "Нет", "issue_date": "09.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 8, "order_quarter": 3}, {"n": 120, "loc": "п.Шалхия Жанакорганского района Кызылординской области", "order_date": "08.09.2026", "tu_num": "№Д12-1-110/Т-09/26", "done": "Нет", "issue_date": "10.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}, {"n": 121, "loc": "п. Кожакент Жанакорганского района Кызылординской области", "order_date": "08.09.2026", "tu_num": "№Д12-1-111/Т-09/26", "done": "Нет", "issue_date": "10.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}, {"n": 122, "loc": "г.Кызылорда", "order_date": "10.09.2026", "tu_num": "№Д12-4-112/Т-09/26", "done": "Нет", "issue_date": "11.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}, {"n": 123, "loc": "г.Кызылорда", "order_date": "10.09.2026", "tu_num": "№Д12-1-113/Т-09/26", "done": "Нет", "issue_date": "14.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}, {"n": 124, "loc": "г.Кызылорда", "order_date": "10.09.2026", "tu_num": "№Д12-3-114/Л-09/26", "done": "Нет", "issue_date": "14.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}, {"n": 125, "loc": "г.Кызылорда", "order_date": "10.09.2026", "tu_num": "№Д12-3-115/Л-09/26", "done": "Нет", "issue_date": "14.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}, {"n": 126, "loc": "г.Кызылорда", "order_date": "10.09.2026", "tu_num": "№Д12-3-116/Л-09/26", "done": "Нет", "issue_date": "14.09.2026", "pir": "", "project": "", "smr": "", "act": "", "rent": "", "change": "", "prolong": "", "note": "", "order_month": 9, "order_quarter": 3}]
+
+</script>
+<script>
+(function(){
+  const RAW = JSON.parse(document.getElementById('registry-data').textContent);
+
+  const FIELD_LABELS = {
+    pir: 'Разрешение на ПИР',
+    project: 'Согласованный проект',
+    smr: 'Разрешение на СМР',
+    act: 'Акт выполнения ТУ',
+    rent: 'Договор на аренду',
+    change: 'Изменение',
+    prolong: 'Продление',
+    note: 'Примечание'
+  };
+  const DETAIL_KEYS = ['pir','project','smr','act','rent','change','prolong','note'];
+
+  function hasDetail(r){
+    return DETAIL_KEYS.some(k => r[k]);
+  }
+
+  // ---------- Stats strip ----------
+  const total = RAW.length;
+  const q1 = RAW.filter(r => r.order_quarter === 1).length;
+  const q2 = RAW.filter(r => r.order_quarter === 2).length;
+  const q3 = RAW.filter(r => r.order_quarter === 3).length;
+  const withNotes = RAW.filter(hasDetail).length;
+  const locCount = new Set(RAW.map(r => r.loc).filter(Boolean)).size;
+  const maxQ = Math.max(q1, q2, q3, 1);
+
+  const statsStrip = document.getElementById('statsStrip');
+  statsStrip.innerHTML = `
+    <div class="stat">
+      <span class="num mono">${total}</span>
+      <span class="lbl">технических условий</span>
+    </div>
+    <div class="stat">
+      <span class="num mono">${locCount}</span>
+      <span class="lbl">населённых пунктов</span>
+    </div>
+    <div class="stat">
+      <span class="num mono">${withNotes}</span>
+      <span class="lbl">с доп. сведениями</span>
+    </div>
+    <div class="stat">
+      <div class="qbars">
+        <div class="bar" style="height:${Math.round(q1/maxQ*26)}px" title="I квартал: ${q1}"></div>
+        <div class="bar" style="height:${Math.round(q2/maxQ*26)}px" title="II квартал: ${q2}"></div>
+        <div class="bar" style="height:${Math.round(q3/maxQ*26)}px" title="III квартал: ${q3}"></div>
+      </div>
+      <span class="lbl">по кварталам: ${q1} / ${q2} / ${q3}</span>
+    </div>
+  `;
+
+  // ---------- Location filter ----------
+  const locFilter = document.getElementById('locFilter');
+  const locs = Array.from(new Set(RAW.map(r => r.loc).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'ru'));
+  locFilter.innerHTML = `<option value="">Все населённые пункты</option>` +
+    locs.map(l => `<option value="${escapeAttr(l)}">${escapeHtml(truncate(l, 46))}</option>`).join('');
+
+  // ---------- Quarter chips ----------
+  const quarterChips = document.getElementById('quarterChips');
+  const chipDefs = [
+    {key:'', label:'Все'},
+    {key:'1', label:'I квартал'},
+    {key:'2', label:'II квартал'},
+    {key:'3', label:'III квартал'},
+  ];
+  quarterChips.innerHTML = chipDefs.map((c,i) =>
+    `<div class="chip ${i===0?'active':''}" data-q="${c.key}">${c.label}</div>`
+  ).join('');
+
+  // ---------- State ----------
+  let state = {
+    search: '',
+    loc: '',
+    quarter: '',
+    sortKey: 'n',
+    sortDir: 1,
+    expanded: new Set()
+  };
+
+  function escapeHtml(s){
+    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function escapeAttr(s){ return escapeHtml(s); }
+  function truncate(s, n){ return s && s.length > n ? s.slice(0,n-1) + '…' : s; }
+
+  function applyFilters(){
+    let rows = RAW.slice();
+    if (state.loc) rows = rows.filter(r => r.loc === state.loc);
+    if (state.quarter) rows = rows.filter(r => String(r.order_quarter) === state.quarter);
+    if (state.search){
+      const q = state.search.toLowerCase();
+      rows = rows.filter(r => {
+        return [r.loc, r.tu_num, r.note, r.prolong, r.change, r.order_date, r.issue_date]
+          .some(v => v && String(v).toLowerCase().includes(q));
+      });
+    }
+    rows.sort((a,b) => {
+      let av = a[state.sortKey], bv = b[state.sortKey];
+      if (state.sortKey === 'n'){ av = a.n; bv = b.n; }
+      if (state.sortKey === 'order_date' || state.sortKey === 'issue_date'){
+        av = parseDate(av); bv = parseDate(bv);
+      }
+      if (av === undefined || av === null || av === '') av = state.sortKey==='n'?0:'';
+      if (bv === undefined || bv === null || bv === '') bv = state.sortKey==='n'?0:'';
+      if (av < bv) return -1 * state.sortDir;
+      if (av > bv) return 1 * state.sortDir;
+      return 0;
+    });
+    return rows;
+  }
+
+  function parseDate(d){
+    if (!d) return 0;
+    const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(d);
+    if (!m) return 0;
+    return new Date(+m[3], +m[2]-1, +m[1]).getTime();
+  }
+
+  function render(){
+    const rows = applyFilters();
+    const tbody = document.getElementById('tableBody');
+    const emptyState = document.getElementById('emptyState');
+
+    if (rows.length === 0){
+      tbody.innerHTML = '';
+      emptyState.style.display = 'block';
+    } else {
+      emptyState.style.display = 'none';
+      tbody.innerHTML = rows.map(r => rowHtml(r)).join('');
+    }
+
+    document.getElementById('countLine').textContent =
+      `Показано ${rows.length} из ${total}`;
+
+    // sort arrows
+    document.querySelectorAll('thead th[data-key]').forEach(th => {
+      const key = th.dataset.key;
+      const label = th.textContent.replace(/[▲▼]/g,'').trim();
+      th.innerHTML = label + (state.sortKey === key ? `<span class="arrow">${state.sortDir === 1 ? '▲' : '▼'}</span>` : '');
+    });
+
+    // row click handlers
+    tbody.querySelectorAll('tr[data-row]').forEach(tr => {
+      tr.addEventListener('click', () => {
+        const n = tr.dataset.row;
+        if (state.expanded.has(n)) state.expanded.delete(n);
+        else state.expanded.add(n);
+        render();
+      });
+    });
+  }
+
+  function rowHtml(r){
+    const isExpanded = state.expanded.has(String(r.n));
+    const detail = hasDetail(r);
+    const statusClass = r.done === 'Да' ? 'status-yes' : 'status-no';
+    let html = `<tr data-row="${r.n}" class="${isExpanded ? 'expanded' : ''}">
+      <td class="n">${r.n}</td>
+      <td>${escapeHtml(r.loc)}${detail ? `<span class="has-detail">●</span>` : ''}</td>
+      <td class="date">${escapeHtml(r.order_date)}</td>
+      <td class="tu">${escapeHtml(r.tu_num)}</td>
+      <td class="date">${escapeHtml(r.issue_date)}</td>
+      <td><span class="status-badge ${statusClass}">${escapeHtml(r.done)}</span></td>
+    </tr>`;
+
+    if (isExpanded && detail){
+      const items = DETAIL_KEYS.filter(k => r[k]).map(k =>
+        `<div class="detail-item"><div class="dt">${FIELD_LABELS[k]}</div><div class="dd">${escapeHtml(r[k])}</div></div>`
+      ).join('');
+      html += `<tr class="detail-row"><td colspan="6"><div class="detail-grid">${items}</div></td></tr>`;
+    } else if (isExpanded && !detail){
+      html += `<tr class="detail-row"><td colspan="6"><div class="detail-grid"><div class="detail-item"><div class="dd" style="color:var(--ink-soft);">Дополнительных сведений по данному ТУ нет.</div></div></div></td></tr>`;
+    }
+    return html;
+  }
+
+  // ---------- Events ----------
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    state.search = e.target.value.trim();
+    render();
+  });
+  locFilter.addEventListener('change', (e) => {
+    state.loc = e.target.value;
+    render();
+  });
+  quarterChips.addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    quarterChips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state.quarter = chip.dataset.q;
+    render();
+  });
+  document.querySelectorAll('thead th[data-key]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      if (state.sortKey === key) state.sortDir *= -1;
+      else { state.sortKey = key; state.sortDir = 1; }
+      render();
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
